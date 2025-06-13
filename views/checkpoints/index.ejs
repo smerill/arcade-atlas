@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Checkpoints</title>
+	</head>
+	<body>
+		<h1>All Checkpoints</h1>
+        <div>
+            <a href="/checkpoints/new">Add Checkpoint</a>
+        </div>
+		<ul>
+			<% for( let checkpoint of checkpoints ) { %>
+			<li><a href=/checkpoints/<%= checkpoint._id  %>><%= checkpoint.title %></a></li>
+			<% } %>
+		</ul>
+	</body>
+</html>

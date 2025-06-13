@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>New Checkpoint</title>
+	</head>
+	<body>
+		<form action="/checkpoints" method="POST">
+			<div>
+				<label for="title">Title</label>
+				<input type="text" name="checkpoint[title]" id="title" />
+			</div>
+			<div>
+				<label for="location">Location</label>
+				<input type="text" name="checkpoint[location]" id="location" />
+			</div>
+			<button>Add Checkpoint</button>
+		</form>
+		<a href="/checkpoints">All Checkpoints</a>
+	</body>
+</html>

@@ -1,0 +1,46 @@
+// used to create random titles for checkpoints
+module.exports.descriptors = [
+    'Immersive',
+    'Vibrant',
+    'Cozy',
+    'Bustling',
+    'Retro',
+    'Futuristic',
+    'Hidden',
+    'Loud',
+    'Quiet',
+    'Themed',
+    'Spacious',
+    'Intimate',
+    'Bright',
+    'Dimly Lit',
+    'Eclectic',
+    'Authentic',
+    'Modern',
+    'Classic',
+    'Industrial',
+    'Artistic'
+];
+
+module.exports.styles = [
+    'Arcade',
+    'Retro Bar',
+    'Game Store',
+    'Comic Shop',
+    'Collectibles',
+    'Board Game Cafe',
+    'Escape Room',
+    'VR Experience',
+    'Merchandise',
+    'Card Shop',
+    'Manga Cafe',
+    'E-sports Arena',
+    'Hobby Shop',
+    'Convention Center',
+    'Museum',
+    'Tech Hub',
+    'Pop Culture Store',
+    'Vintage Store',
+    'Indie Game Studio',
+    'Fan Meetup Spot'
+];

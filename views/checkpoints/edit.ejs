@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Edit Checkpoint</title>
+	</head>
+	<body>
+		<h1>Edit Checkpoint</h1>
+		<form action="/checkpoints/<%= checkpoint._id %>?_method=PATCH" method="POST">
+			<div>
+				<label for="title">Title</label>
+				<input type="text" name="checkpoint[title]" id="title" value="<%= checkpoint.title %>" />
+			</div>
+			<div>
+				<label for="location">Location</label>
+				<input type="text" name="checkpoint[location]" id="location" value="<%= checkpoint.location %>" />
+			</div>
+			<button>Save Checkpoint</button>
+		</form>
+		<a href="/checkpoints/<%= checkpoint._id %>">Back To Checkpoint</a>
+	</body>
+</html>

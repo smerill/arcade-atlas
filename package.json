@@ -1,0 +1,19 @@
+{
+  "name": "arcade-atlas",
+  "version": "1.0.0",
+  "description": "🗺️ Collaborative web app to map and share arcades, retro bars, geek shops, and other alternative culture spots around the world. Built with Node.js, Express, MongoDB, EJS, and Tailwind.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.15.2"
+  }
+}

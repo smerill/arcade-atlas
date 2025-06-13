@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Show</title>
+	</head>
+	<body>
+		<h1><%= checkpoint.title %></h1>
+		<h1><%= checkpoint.location %></h1>
+		<p><a href="/checkpoints/<%= checkpoint._id %>/edit">Edit</a></p>
+        <p><form action="/checkpoints/<%= checkpoint._id %>?_method=DELETE" method="POST">
+			<button>Delete</button>
+		</form></p>
+		<footer>
+			<a href="/checkpoints">All Checkpoints</a>
+		</footer>
+	</body>
+</html>
