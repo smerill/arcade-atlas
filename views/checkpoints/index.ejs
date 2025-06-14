@@ -1,19 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Checkpoints</title>
-	</head>
-	<body>
-		<h1>All Checkpoints</h1>
-        <div>
-            <a href="/checkpoints/new">Add Checkpoint</a>
-        </div>
-		<ul>
-			<% for( let checkpoint of checkpoints ) { %>
-			<li><a href=/checkpoints/<%= checkpoint._id  %>><%= checkpoint.title %></a></li>
-			<% } %>
-		</ul>
-	</body>
-</html>
+<% layout('layouts/boilerplate') %>
+<h1>All Checkpoints</h1>
+<div>
+	<a href="/checkpoints/new">Add Checkpoint</a>
+</div>
+
+<% for( let checkpoint of checkpoints ) { %>
+<div class="card mb-3">
+	<div class="row">
+		<div class="col-md-4">
+			<img class="img-fluid" alt="" src="<%= checkpoint.image %>" />
+		</div>
+		<div class="col-md-8">
+			<div class="card-body">
+				<h5 class="card-title"><%= checkpoint.title %></h5>
+				<p class="card-text"><%= checkpoint.description %></p>
+				<p class="card-text"><small class="text-secondary"> <%= checkpoint.location %> </small></p>
+				<a href="/checkpoints/<%= checkpoint._id %>" class="btn btn-primary">View <%= checkpoint.title %></a>
+			</div>
+		</div>
+	</div>
+</div>
+<% } %>

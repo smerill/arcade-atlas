@@ -1,22 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>New Checkpoint</title>
-	</head>
-	<body>
+<% layout('layouts/boilerplate') %>
+<div class="row">
+	<h1 class="text-center">New Checkpoint</h1>
+	<div class="col-6 offset-3">
 		<form action="/checkpoints" method="POST">
-			<div>
-				<label for="title">Title</label>
-				<input type="text" name="checkpoint[title]" id="title" />
+			<div class="mb-3">
+				<label class="form-label" for="title">Title</label>
+				<input class="form-control" type="text" name="checkpoint[title]" id="title" />
 			</div>
-			<div>
-				<label for="location">Location</label>
-				<input type="text" name="checkpoint[location]" id="location" />
+			<div class="mb-3">
+				<label class="form-label" for="location">Location</label>
+				<input class="form-control" type="text" name="checkpoint[location]" id="location" />
 			</div>
-			<button>Add Checkpoint</button>
+			<div class="mb-3">
+				<label class="form-label" for="image">Image Url</label>
+				<input class="form-control" type="text" name="checkpoint[image]" id="image" />
+			</div>
+
+			<div class="mb-3">
+				<label class="form-label" for="price">Checkpoint Price</label>
+				<div class="input-group">
+					<span class="input-group-text" id="price-label">$</span>
+					<input
+						type="text"
+						class="form-control"
+						id="price"
+						placeholder="0.00"
+						aria-label="price"
+						aria-describedby="price-label"
+						name="checkpoint[price]"
+					/>
+				</div>
+			</div>
+
+			<div class="mb-3">
+				<label class="form-label" for="description">Description</label>
+				<textarea class="form-control" type="text" name="checkpoint[description]" id="description"></textarea>
+			</div>
+			<div class="mb-3">
+				<button class="btn btn-success">Add Checkpoint</button>
+			</div>
 		</form>
 		<a href="/checkpoints">All Checkpoints</a>
-	</body>
-</html>
+	</div>
+</div>
