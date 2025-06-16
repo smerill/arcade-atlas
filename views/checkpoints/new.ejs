@@ -2,18 +2,21 @@
 <div class="row">
 	<h1 class="text-center">New Checkpoint</h1>
 	<div class="col-6 offset-3">
-		<form action="/checkpoints" method="POST">
+		<form action="/checkpoints" method="POST" class="validated-form" novalidate>
 			<div class="mb-3">
 				<label class="form-label" for="title">Title</label>
-				<input class="form-control" type="text" name="checkpoint[title]" id="title" />
+				<input class="form-control" type="text" name="checkpoint[title]" id="title" required />
+				<div class="valid-feedback">Looks good!</div>
 			</div>
 			<div class="mb-3">
 				<label class="form-label" for="location">Location</label>
-				<input class="form-control" type="text" name="checkpoint[location]" id="location" />
+				<input class="form-control" type="text" name="checkpoint[location]" id="location" required />
+				<div class="valid-feedback">Looks good!</div>
 			</div>
 			<div class="mb-3">
 				<label class="form-label" for="image">Image Url</label>
-				<input class="form-control" type="text" name="checkpoint[image]" id="image" />
+				<input class="form-control" type="text" name="checkpoint[image]" id="image" required />
+				<div class="valid-feedback">Looks good!</div>
 			</div>
 
 			<div class="mb-3">
@@ -28,13 +31,21 @@
 						aria-label="price"
 						aria-describedby="price-label"
 						name="checkpoint[price]"
+						required
 					/>
 				</div>
 			</div>
 
 			<div class="mb-3">
 				<label class="form-label" for="description">Description</label>
-				<textarea class="form-control" type="text" name="checkpoint[description]" id="description"></textarea>
+				<textarea
+					class="form-control"
+					type="text"
+					name="checkpoint[description]"
+					id="description"
+					required
+				></textarea>
+				<div class="valid-feedback">Looks good!</div>
 			</div>
 			<div class="mb-3">
 				<button class="btn btn-success">Add Checkpoint</button>
