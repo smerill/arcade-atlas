@@ -2,11 +2,12 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
-const { checkpointSchema } = require('./schemas');
+const { checkpointSchema, reviewSchema } = require('./schemas');
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
 const Checkpoint = require('./models/checkpoint');
+const Review = require('./models/review');
 
 // db will be created if it doesnt exist
 mongoose.connect('mongodb://127.0.0.1:27017/arcade-atlas');
@@ -35,6 +36,17 @@ const validateCheckpoint = (req, res, next) => {
         next();
     }
 }
+
+const validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    } else {
+        next();
+    }
+}
+
 // run 'node seeds/index.js' BEFORE acessing these paths to populated the db
 // this ensures you have data to test CRUD op
 
@@ -48,7 +60,7 @@ app.get('/checkpoints/new', (req, res) => {
 });
 
 app.get('/checkpoints/:id', catchAsync(async (req, res) => {
-    const checkpoint = await Checkpoint.findById(req.params.id);
+    const checkpoint = await Checkpoint.findById(req.params.id).populate('reviews');
     res.render('checkpoints/show.ejs', { checkpoint });
 }));
 
@@ -64,6 +76,15 @@ app.post('/checkpoints', validateCheckpoint, catchAsync(async (req, res, next) =
     res.redirect(`/checkpoints/${checkpoint._id}`);
 }));
 
+app.post('/checkpoints/:id/reviews', validateReview, catchAsync(async (req, res) => {
+    const checkpoint = await Checkpoint.findById(req.params.id);
+    const review = new Review(req.body.review);
+    checkpoint.reviews.push(review);
+    await review.save();
+    await checkpoint.save();
+    res.redirect(`/checkpoints/${checkpoint._id}`);
+}));
+
 app.patch('/checkpoints/:id', validateCheckpoint, catchAsync(async (req, res) => {
     const checkpoint = await Checkpoint.findByIdAndUpdate(req.params.id, { ...req.body.checkpoint });
     res.redirect(`/checkpoints/${checkpoint._id}`);
@@ -72,6 +93,13 @@ app.patch('/checkpoints/:id', validateCheckpoint, catchAsync(async (req, res) =>
 app.delete('/checkpoints/:id', catchAsync(async (req, res) => {
     await Checkpoint.findByIdAndDelete(req.params.id);
     res.redirect('/checkpoints');
+}));
+
+app.delete('/checkpoints/:id/reviews/:reviewId', catchAsync(async (req, res) => {
+    const { id, reviewId } = req.params;
+    await Checkpoint.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/checkpoints/${id}`);
 }));
 
 app.all(/(.*)/, (req, res, next) => {
