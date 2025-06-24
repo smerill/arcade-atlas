@@ -24,6 +24,6 @@ CheckpointSchema.post('findOneAndDelete', async function (doc) {
             }
         })
     }
-})
+});
 
 module.exports = mongoose.model('Checkpoint', CheckpointSchema);

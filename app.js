@@ -2,12 +2,12 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
-const { checkpointSchema, reviewSchema } = require('./schemas');
-const catchAsync = require('./utils/catchAsync');
-const ExpressError = require('./utils/ExpressError');
+const session = require('express-session');
+const flash = require('connect-flash');
 const methodOverride = require('method-override');
-const Checkpoint = require('./models/checkpoint');
-const Review = require('./models/review');
+const ExpressError = require('./utils/ExpressError');
+const checkpointsRouter = require('./routes/checkpoints');
+const reviewsRouter = require('./routes/reviews');
 
 // db will be created if it doesnt exist
 mongoose.connect('mongodb://127.0.0.1:27017/arcade-atlas');
@@ -26,81 +26,32 @@ app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-const validateCheckpoint = (req, res, next) => {
-    const { error } = checkpointSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
+const sessionConfig = {
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }
+app.use(session(sessionConfig));
+app.use(flash());
 
-const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-}
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+});
 
 // run 'node seeds/index.js' BEFORE acessing these paths to populated the db
 // this ensures you have data to test CRUD op
 
-app.get('/checkpoints', catchAsync(async (req, res) => {
-    const checkpoints = await Checkpoint.find({});
-    res.render('checkpoints/index.ejs', { checkpoints });
-}));
-
-app.get('/checkpoints/new', (req, res) => {
-    res.render('checkpoints/new.ejs');
-});
-
-app.get('/checkpoints/:id', catchAsync(async (req, res) => {
-    const checkpoint = await Checkpoint.findById(req.params.id).populate('reviews');
-    res.render('checkpoints/show.ejs', { checkpoint });
-}));
-
-app.get('/checkpoints/:id/edit', catchAsync(async (req, res) => {
-    const checkpoint = await Checkpoint.findById(req.params.id);
-    res.render('checkpoints/edit.ejs', { checkpoint });
-}));
-
-app.post('/checkpoints', validateCheckpoint, catchAsync(async (req, res, next) => {
-    // if (!req.body.checkpoint) throw new ExpressError('Invalid Checkpoint Data', 400);
-    const checkpoint = new Checkpoint(req.body.checkpoint);
-    await checkpoint.save();
-    res.redirect(`/checkpoints/${checkpoint._id}`);
-}));
-
-app.post('/checkpoints/:id/reviews', validateReview, catchAsync(async (req, res) => {
-    const checkpoint = await Checkpoint.findById(req.params.id);
-    const review = new Review(req.body.review);
-    checkpoint.reviews.push(review);
-    await review.save();
-    await checkpoint.save();
-    res.redirect(`/checkpoints/${checkpoint._id}`);
-}));
-
-app.patch('/checkpoints/:id', validateCheckpoint, catchAsync(async (req, res) => {
-    const checkpoint = await Checkpoint.findByIdAndUpdate(req.params.id, { ...req.body.checkpoint });
-    res.redirect(`/checkpoints/${checkpoint._id}`);
-}));
-
-app.delete('/checkpoints/:id', catchAsync(async (req, res) => {
-    await Checkpoint.findByIdAndDelete(req.params.id);
-    res.redirect('/checkpoints');
-}));
-
-app.delete('/checkpoints/:id/reviews/:reviewId', catchAsync(async (req, res) => {
-    const { id, reviewId } = req.params;
-    await Checkpoint.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
-    await Review.findByIdAndDelete(reviewId);
-    res.redirect(`/checkpoints/${id}`);
-}));
+app.use('/checkpoints', checkpointsRouter);
+app.use('/checkpoints/:id/reviews', reviewsRouter);
 
 app.all(/(.*)/, (req, res, next) => {
     next(new ExpressError('PAGE NOT FOUND', 404));
