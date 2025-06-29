@@ -4,10 +4,14 @@ const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const session = require('express-session');
 const flash = require('connect-flash');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
 const methodOverride = require('method-override');
 const ExpressError = require('./utils/ExpressError');
 const checkpointsRouter = require('./routes/checkpoints');
 const reviewsRouter = require('./routes/reviews');
+const userRouter = require('./routes/users');
+const User = require('./models/user');
 
 // db will be created if it doesnt exist
 mongoose.connect('mongodb://127.0.0.1:27017/arcade-atlas');
@@ -41,7 +45,15 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
@@ -50,6 +62,8 @@ app.use((req, res, next) => {
 // run 'node seeds/index.js' BEFORE acessing these paths to populated the db
 // this ensures you have data to test CRUD op
 
+
+app.use('/', userRouter);
 app.use('/checkpoints', checkpointsRouter);
 app.use('/checkpoints/:id/reviews', reviewsRouter);
 
