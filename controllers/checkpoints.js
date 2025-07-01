@@ -1,4 +1,5 @@
 const Checkpoint = require('../models/checkpoint');
+const { cloudinary } = require('../cloudinary');
 
 module.exports.index = async (req, res) => {
     const checkpoints = await Checkpoint.find({});
@@ -28,16 +29,26 @@ module.exports.renderEditForm = async (req, res) => {
 }
 
 module.exports.createCheckpoint = async (req, res, next) => {
-    // if (!req.body.checkpoint) throw new ExpressError('Invalid Checkpoint Data', 400);
     const checkpoint = new Checkpoint(req.body.checkpoint);
+    checkpoint.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     checkpoint.author = req.user._id;
     await checkpoint.save();
+    console.log(checkpoint);
     req.flash('success', 'Successfully made a new checkpoint');
     res.redirect(`/checkpoints/${checkpoint._id}`);
 }
 
 module.exports.updateCheckpoint = async (req, res) => {
     const checkpoint = await Checkpoint.findByIdAndUpdate(req.params.id, { ...req.body.checkpoint });
+    const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
+    checkpoint.images.push(...imgs);
+    await checkpoint.save();
+    if (req.body.deleteImages) {
+        for (let filename of req.body.deleteImages) {
+            await cloudinary.uploader.destroy(filename);
+        }
+        await checkpoint.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });
+    }
     req.flash('success', 'Successfully updated checkpoint');
     res.redirect(`/checkpoints/${checkpoint._id}`);
 }

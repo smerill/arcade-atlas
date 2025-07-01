@@ -2,9 +2,19 @@ const mongoose = require('mongoose');
 const Review = require('./review');
 const Schema = mongoose.Schema;
 
+// https://res.cloudinary.com/dxntk3fj8/image/upload/w_300/v1751347118/ArcadeAtlas/dsztvctsh3jos7rryqhl.jpg
+
+const ImageSchema = new Schema({
+    url: String,
+    filename: String
+})
+
+ImageSchema.virtual('thumbnail').get(function () {
+    return this.url.replace('/upload', '/upload/w_200')
+})
 const CheckpointSchema = new Schema({
     title: String,
-    image: String,
+    images: [ImageSchema],
     price: Number,
     description: String,
     location: String,

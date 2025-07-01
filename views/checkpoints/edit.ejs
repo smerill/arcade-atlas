@@ -2,7 +2,13 @@
 <div class="row">
 	<h1 class="text-center">Edit Checkpoint</h1>
 	<div class="col-6 offset-3">
-		<form action="/checkpoints/<%= checkpoint._id %>?_method=PATCH" method="POST" class="validated-form" novalidate>
+		<form
+			action="/checkpoints/<%= checkpoint._id %>?_method=PATCH"
+			method="POST"
+			class="validated-form"
+			enctype="multipart/form-data"
+			novalidate
+		>
 			<div class="mb-3">
 				<label class="form-label" for="title">Title</label>
 				<input
@@ -28,18 +34,9 @@
 				<div class="valid-feedback">Looks good!</div>
 			</div>
 			<div class="mb-3">
-				<label class="form-label" for="image">Image Url</label>
-				<input
-					class="form-control"
-					type="text"
-					name="checkpoint[image]"
-					id="image"
-					value="<%= checkpoint.image %>"
-					required
-				/>
-				<div class="valid-feedback">Looks good!</div>
+				<label for="formFileMultiple" class="form-label">Add More Images</label>
+				<input type="file" class="form-control" id="formFileMultiple" name="image" multiple />
 			</div>
-
 			<div class="mb-3">
 				<label class="form-label" for="price">Checkpoint Price</label>
 				<div class="input-group">
@@ -65,6 +62,15 @@
 <%= checkpoint.description %></textarea
 				>
 				<div class="valid-feedback">Looks good!</div>
+			</div>
+			<div class="mb-3">
+				<% checkpoint.images.forEach(function (img, i) { %>
+				<img src="<%= img.thumbnail %>" alt="" class="img-thumbnail" />
+				<div class="form-check-inline">
+					<input type="checkbox" id="image-<%= i %>" name="deleteImages[]" value="<%= img.filename %>" />
+				</div>
+				<label for="image-<%= i %>">Delete</label>
+				<% }) %>
 			</div>
 			<div class="mb-3">
 				<button class="btn btn-info">Save Checkpoint</button>
