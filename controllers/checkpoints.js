@@ -1,5 +1,8 @@
 const Checkpoint = require('../models/checkpoint');
 const { cloudinary } = require('../cloudinary');
+const maptilerClient = require("@maptiler/client");
+maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
+
 
 module.exports.index = async (req, res) => {
     const checkpoints = await Checkpoint.find({});
@@ -29,7 +32,9 @@ module.exports.renderEditForm = async (req, res) => {
 }
 
 module.exports.createCheckpoint = async (req, res, next) => {
+    const geoData = await maptilerClient.geocoding.forward(req.body.checkpoint.location, { limit: 1 });
     const checkpoint = new Checkpoint(req.body.checkpoint);
+    checkpoint.geometry = geoData.features[0].geometry;
     checkpoint.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     checkpoint.author = req.user._id;
     await checkpoint.save();
@@ -40,6 +45,8 @@ module.exports.createCheckpoint = async (req, res, next) => {
 
 module.exports.updateCheckpoint = async (req, res) => {
     const checkpoint = await Checkpoint.findByIdAndUpdate(req.params.id, { ...req.body.checkpoint });
+    const geoData = await maptilerClient.geocoding.forward(req.body.checkpoint.location, { limit: 1 });
+    checkpoint.geometry = geoData.features[0].geometry;
     const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
     checkpoint.images.push(...imgs);
     await checkpoint.save();

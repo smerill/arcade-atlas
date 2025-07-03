@@ -15,8 +15,7 @@ db.once("open", () => {
 
 const seedDB = async () => {
   await Checkpoint.deleteMany({});
-
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 300; i++) {
     const sample = (arr) => arr[Math.floor(Math.random() * arr.length)];
     const random1000 = Math.floor(Math.random() * 1000);
     const price = Math.floor(Math.random() * 20) + 10;
@@ -26,7 +25,14 @@ const seedDB = async () => {
       title: `${sample(descriptors)} ${sample(styles)}`,
       images: { url: `https://picsum.photos/400?random=${Math.random()}`, filename: `${Math.random() * 10 + 1}` },
       description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. At, voluptatum impedit nam maxime faci',
-      price
+      price,
+      geometry: {
+        type: "Point",
+        coordinates: [
+          cities[random1000].longitude,
+          cities[random1000].latitude
+        ]
+      }
     });
     await cp.save();
   }

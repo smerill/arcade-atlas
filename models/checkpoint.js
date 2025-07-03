@@ -2,19 +2,32 @@ const mongoose = require('mongoose');
 const Review = require('./review');
 const Schema = mongoose.Schema;
 
-// https://res.cloudinary.com/dxntk3fj8/image/upload/w_300/v1751347118/ArcadeAtlas/dsztvctsh3jos7rryqhl.jpg
-
 const ImageSchema = new Schema({
     url: String,
     filename: String
-})
+});
 
 ImageSchema.virtual('thumbnail').get(function () {
-    return this.url.replace('/upload', '/upload/w_200')
-})
+    return this.url.replace('/upload', '/upload/w_200');
+});
+
+
+const opts = { toJSON: { virtuals: true } }
+
 const CheckpointSchema = new Schema({
     title: String,
     images: [ImageSchema],
+    geometry: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        }
+    },
     price: Number,
     description: String,
     location: String,
@@ -28,6 +41,12 @@ const CheckpointSchema = new Schema({
             ref: 'Review'
         }
     ]
+}, opts);
+
+CheckpointSchema.virtual('properties.popUpMarkup').get(function () {
+    return `
+    <strong><a href="/checkpoints/${this._id}">${this.title}</a><strong>
+    <p>${this.description.substring(0, 20)}...</p>`
 });
 
 CheckpointSchema.post('findOneAndDelete', async function (doc) {
@@ -36,7 +55,7 @@ CheckpointSchema.post('findOneAndDelete', async function (doc) {
             _id: {
                 $in: doc.reviews
             }
-        })
+        });
     }
 });
 
