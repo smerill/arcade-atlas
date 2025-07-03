@@ -71,6 +71,10 @@ app.use('/', userRouter);
 app.use('/checkpoints', checkpointsRouter);
 app.use('/checkpoints/:id/reviews', reviewsRouter);
 
+app.get('/', (req, res) => {
+    res.render('home.ejs');
+});
+
 app.all(/(.*)/, (req, res, next) => {
     next(new ExpressError('PAGE NOT FOUND', 404));
 });
