@@ -38,7 +38,6 @@ module.exports.createCheckpoint = async (req, res, next) => {
     checkpoint.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     checkpoint.author = req.user._id;
     await checkpoint.save();
-    console.log(checkpoint);
     req.flash('success', 'Successfully made a new checkpoint');
     res.redirect(`/checkpoints/${checkpoint._id}`);
 }

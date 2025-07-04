@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Review = require('./review');
 const Schema = mongoose.Schema;
+const { cloudinary } = require('../cloudinary');
 
 const ImageSchema = new Schema({
     url: String,
@@ -51,11 +52,18 @@ CheckpointSchema.virtual('properties.popUpMarkup').get(function () {
 
 CheckpointSchema.post('findOneAndDelete', async function (doc) {
     if (doc) {
-        await Review.deleteMany({
-            _id: {
-                $in: doc.reviews
+        if (doc.reviews && doc.reviews.length) {
+            await Review.deleteMany({
+                _id: {
+                    $in: doc.reviews
+                }
+            });
+        }
+        if (doc.images && doc.images.length) {
+            for (let img of doc.images) {
+                await cloudinary.uploader.destroy(img.filename);
             }
-        });
+        }
     }
 });
 

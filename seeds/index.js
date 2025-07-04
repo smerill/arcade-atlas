@@ -23,7 +23,6 @@ const seedDB = async () => {
       author: '6860caef07258d19dfadf609',
       location: `${cities[random1000].city}, ${cities[random1000].state}`,
       title: `${sample(descriptors)} ${sample(styles)}`,
-      images: { url: `https://picsum.photos/400?random=${Math.random()}`, filename: `${Math.random() * 10 + 1}` },
       description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. At, voluptatum impedit nam maxime faci',
       price,
       geometry: {
@@ -32,7 +31,17 @@ const seedDB = async () => {
           cities[random1000].longitude,
           cities[random1000].latitude
         ]
-      }
+      },
+      images: [
+        {
+          url: 'https://res.cloudinary.com/dxntk3fj8/image/upload/v1751637122/seeds/jrtlwcce2nvohfbkduud.jpg',
+          filename: 'seeds/jrtlwcce2nvohfbkduud'
+        },
+        {
+          url: 'https://res.cloudinary.com/dxntk3fj8/image/upload/v1751637117/seeds/jjcffsusjkt5gj1siv4s.jpg',
+          filename: 'seeds/jjcffsusjkt5gj1siv4s'
+        }
+      ]
     });
     await cp.save();
   }
