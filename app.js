@@ -19,7 +19,7 @@ const checkpointsRouter = require('./routes/checkpoints');
 const reviewsRouter = require('./routes/reviews');
 const userRouter = require('./routes/users');
 const User = require('./models/user');
-const dbUrl = 'mongodb://127.0.0.1:27017/arcade-atlas';
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/arcade-atlas';
 // db will be created if it doesnt exist
 mongoose.connect(dbUrl);
 
@@ -41,11 +41,13 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(sanitizeV5({ replaceWith: '_' }));
 
+const secret = process.env.SECRET || 'secret';
+
 const store = MongoStore.create({
     mongoUrl: dbUrl,
     touchAfter: 24 * 60 * 60,
     crypto: {
-        secret: 'secret'
+        secret
     }
 });
 
